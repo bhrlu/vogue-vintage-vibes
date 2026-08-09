@@ -24,7 +24,8 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const newest = products.filter((p) => p.isNew).slice(0, 3);
-  const [big, ...rest] = categories;
+  const big = categories[0]!;
+  const rest = categories.slice(1);
 
   return (
     <>
