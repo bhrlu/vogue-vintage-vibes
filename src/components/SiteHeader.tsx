@@ -17,7 +17,8 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-terracotta/25 bg-background/85 backdrop-blur-md">
+      <div className="surface-warm h-1 w-full" />
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <button
           type="button"
@@ -28,7 +29,7 @@ export function SiteHeader() {
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
 
-        <Link to="/" className="font-display text-2xl tracking-[0.22em] text-foreground">
+        <Link to="/" className="font-display text-2xl tracking-[0.22em] text-terracotta">
           SÂNDÉ
         </Link>
 
@@ -38,8 +39,8 @@ export function SiteHeader() {
               key={link.to}
               to={link.to}
               activeOptions={{ exact: link.to === "/" }}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-foreground" }}
+              className="text-muted-foreground transition-colors hover:text-terracotta"
+              activeProps={{ className: "text-terracotta" }}
             >
               {link.label}
             </Link>
