@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --font-display: "Cormorant Garamond", "Vazirmatn", ui-serif, serif;
+  --font-sans: "Vazirmatn", "Karla", ui-sans-serif, system-ui, sans-serif;
+  --font-latin: "Karla", "Vazirmatn", ui-sans-serif, sans-serif;
+}
+
 /*
  * Design system definition.
  *
