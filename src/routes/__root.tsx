@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
+import { AuthProvider } from "../lib/auth";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { Toaster } from "../components/ui/sonner";
@@ -133,6 +134,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <CartProvider>
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
@@ -144,6 +146,7 @@ function RootComponent() {
         </div>
         <Toaster position="top-center" />
       </CartProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -1,9 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 import { getProduct } from "@/data/products";
 import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/lib/auth";
+import { placeOrder } from "@/lib/orders";
+import { img, type AdminProduct } from "@/lib/catalog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +31,9 @@ const FREE_SHIPPING_FROM = 2000000;
 
 function CheckoutPage() {
   const { lines, subtotal, clear } = useCart();
+  const { user, loading } = useAuth();
   const [done, setDone] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const shipping = subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
 
   if (done) {
@@ -74,52 +80,99 @@ function CheckoutPage() {
       <div className="mt-10 grid gap-12 md:grid-cols-[1fr_320px]">
         <form
           className="space-y-5"
-          onSubmit={(event) => {
+          onSubmit={async (event) => {
             event.preventDefault();
-            const orderNumber = String(Math.floor(100000 + Math.random() * 900000));
-            clear();
-            setDone(orderNumber);
+            if (!user) return;
+            const data = new FormData(event.currentTarget as HTMLFormElement);
+            setBusy(true);
+            try {
+              const order = await placeOrder({
+                userId: user.id,
+                lines,
+                products: lines.map((line) => {
+                  const product = getProduct(line.productId);
+                  if (!product) return undefined;
+                  return {
+                    ...product,
+                    images: product.images.map(img),
+                  } as unknown as AdminProduct;
+                }),
+                subtotal,
+                discount: 0,
+                shipping,
+                paymentMethod: "online",
+                address: {
+                  receiver: `${data.get("firstName")} ${data.get("lastName")}`,
+                  phone: String(data.get("phone") ?? ""),
+                  province: String(data.get("city") ?? ""),
+                  city: String(data.get("city") ?? ""),
+                  postal_code: String(data.get("postal") ?? ""),
+                  line: String(data.get("address") ?? ""),
+                },
+                note: String(data.get("note") ?? "") || undefined,
+              });
+              clear();
+              setDone(order.order_number);
+            } catch (error) {
+              toast.error(error instanceof Error ? error.message : "ثبت سفارش ناموفق بود");
+            } finally {
+              setBusy(false);
+            }
           }}
         >
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <Label htmlFor="firstName">نام</Label>
-              <Input id="firstName" required className="mt-2 rounded-none" />
+              <Input id="firstName" name="firstName" required className="mt-2 rounded-none" />
             </div>
             <div>
               <Label htmlFor="lastName">نام خانوادگی</Label>
-              <Input id="lastName" required className="mt-2 rounded-none" />
+              <Input id="lastName" name="lastName" required className="mt-2 rounded-none" />
             </div>
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <Label htmlFor="phone">شماره تماس</Label>
-              <Input id="phone" required inputMode="tel" className="mt-2 rounded-none" />
+              <Input id="phone" name="phone" required inputMode="tel" className="mt-2 rounded-none" />
             </div>
             <div>
               <Label htmlFor="city">شهر</Label>
-              <Input id="city" required className="mt-2 rounded-none" />
+              <Input id="city" name="city" required className="mt-2 rounded-none" />
             </div>
           </div>
           <div>
             <Label htmlFor="address">نشانی کامل</Label>
-            <Textarea id="address" required rows={3} className="mt-2 rounded-none" />
+            <Textarea id="address" name="address" required rows={3} className="mt-2 rounded-none" />
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <Label htmlFor="postal">کد پستی</Label>
-              <Input id="postal" required inputMode="numeric" className="mt-2 rounded-none" />
+              <Input id="postal" name="postal" required inputMode="numeric" className="mt-2 rounded-none" />
             </div>
             <div>
               <Label htmlFor="note">یادداشت سفارش (اختیاری)</Label>
-              <Input id="note" className="mt-2 rounded-none" />
+              <Input id="note" name="note" className="mt-2 rounded-none" />
             </div>
           </div>
-          <Button type="submit" className="h-11 w-full rounded-none text-sm tracking-widest">
-            ثبت سفارش
-          </Button>
+          {user ? (
+            <Button
+              type="submit"
+              disabled={busy}
+              className="h-11 w-full rounded-none text-sm tracking-widest"
+            >
+              ثبت سفارش
+            </Button>
+          ) : (
+            <Link
+              to="/auth"
+              search={{ redirect: "/checkout" }}
+              className="flex h-11 w-full items-center justify-center bg-primary text-sm tracking-widest text-primary-foreground"
+            >
+              {loading ? "..." : "برای ثبت سفارش وارد شوید"}
+            </Link>
+          )}
           <p className="text-xs text-muted-foreground">
-            نسخه نمایشی: پرداخت آنلاین فعال نیست و مبلغی از شما دریافت نمی‌شود.
+            سفارش شما در حساب کاربری ذخیره و قابل پیگیری است؛ درگاه پرداخت واقعی هنوز متصل نشده.
           </p>
         </form>
 

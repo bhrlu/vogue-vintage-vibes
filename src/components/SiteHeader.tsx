@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { toFa } from "@/lib/format";
@@ -54,6 +54,13 @@ export function SiteHeader() {
             className="text-foreground/70 transition-colors hover:text-foreground"
           >
             <Search className="size-5" />
+          </Link>
+          <Link
+            to="/account"
+            aria-label="حساب کاربری"
+            className="text-foreground/70 transition-colors hover:text-foreground"
+          >
+            <User className="size-5" />
           </Link>
           <Link
             to="/cart"
