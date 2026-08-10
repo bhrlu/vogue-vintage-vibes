@@ -16,7 +16,7 @@ function AdminOrders() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("*, order_items(*), profiles(full_name, phone)")
+        .select("*, order_items(*)")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
@@ -25,7 +25,7 @@ function AdminOrders() {
 
   const update = useMutation({
     mutationFn: async (input: { id: string; patch: Record<string, string> }) => {
-      const { error } = await supabase.from("orders").update(input.patch).eq("id", input.id);
+      const { error } = await supabase.from("orders").update(input.patch as never).eq("id", input.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -52,7 +52,7 @@ function AdminOrders() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm">
-                  سفارش #{toFa(order.order_number)} — {order.profiles?.full_name ?? "کاربر"}
+                  سفارش #{toFa(order.order_number)}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {toFa(new Date(order.created_at).toLocaleDateString("fa-IR"))} ·{" "}

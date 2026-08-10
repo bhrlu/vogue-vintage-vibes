@@ -61,7 +61,7 @@ function toForm(product: AdminProduct & { rawImages?: string[] }): FormState {
     description: product.description,
     stock: String(product.stock),
     is_new: product.isNew,
-    active: product.active,
+    active: product.active ?? true,
   };
 }
 
@@ -101,10 +101,10 @@ function AdminProducts() {
     mutationFn: async (state: FormState) => {
       const payload = parsePayload(state);
       if (state.id) {
-        const { error } = await supabase.from("products").update(payload).eq("id", state.id);
+        const { error } = await supabase.from("products").update(payload as never).eq("id", state.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("products").insert(payload);
+        const { error } = await supabase.from("products").insert({ ...payload, id: crypto.randomUUID() });
         if (error) throw error;
       }
     },
