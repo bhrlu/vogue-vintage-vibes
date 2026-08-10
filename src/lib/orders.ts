@@ -34,7 +34,7 @@ export async function placeOrder(input: {
   shipping: number;
   paymentMethod: "online" | "cod";
   address: ShippingInfo;
-  note?: string;
+  note?: string | undefined;
 }) {
   const total = Math.max(0, input.subtotal - input.discount) + input.shipping;
   const { data: order, error } = await supabase

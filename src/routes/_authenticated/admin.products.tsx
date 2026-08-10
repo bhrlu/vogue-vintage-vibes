@@ -60,7 +60,7 @@ function toForm(product: AdminProduct & { rawImages?: string[] }): FormState {
     material: product.material,
     description: product.description,
     stock: String(product.stock),
-    is_new: product.isNew,
+    is_new: product.isNew ?? true,
     active: product.active ?? true,
   };
 }
