@@ -1,10 +1,3 @@
-import tshirt from "@/assets/cat-tshirt.jpg";
-import crop from "@/assets/cat-crop.jpg";
-import shorts from "@/assets/cat-shorts.jpg";
-import socks from "@/assets/cat-socks.jpg";
-import set from "@/assets/cat-set.jpg";
-import modelTshirt from "@/assets/model-tshirt.jpg";
-import modelCrop from "@/assets/model-crop.jpg";
 
 export type CategoryId = "tshirt" | "crop" | "shorts" | "socks" | "set";
 
@@ -23,11 +16,11 @@ export type Product = {
 };
 
 export const categories: { id: CategoryId; title: string; image: string }[] = [
-  { id: "tshirt", title: "تی‌شرت", image: tshirt },
-  { id: "crop", title: "کراپ‌تاپ", image: crop },
-  { id: "shorts", title: "شورت", image: shorts },
-  { id: "socks", title: "جوراب", image: socks },
-  { id: "set", title: "ست", image: set },
+  { id: "tshirt", title: "تی‌شرت", image: "cat-tshirt" },
+  { id: "crop", title: "کراپ‌تاپ", image: "cat-crop" },
+  { id: "shorts", title: "شورت", image: "cat-shorts" },
+  { id: "socks", title: "جوراب", image: "cat-socks" },
+  { id: "set", title: "ست", image: "cat-set" },
 ];
 
 export const categoryTitle = (id: CategoryId) =>
@@ -54,7 +47,7 @@ const seeds: Seed[] = [
     oldPrice: 890000,
     colors: [palette.offwhite, palette.sand, palette.charcoal],
     sizes: clothingSizes,
-    images: [modelTshirt, tshirt],
+    images: ["model-tshirt", "cat-tshirt"],
     material: "۱۰۰٪ پنبه پنبه‌ریز، گرماژ ۱۸۰",
     description:
       "برشی آزاد و افتاده با یقه گرد دوخت‌دوبل؛ انتخابی آرام برای هر روز که فرم خود را پس از شست‌وشو حفظ می‌کند.",
@@ -66,7 +59,7 @@ const seeds: Seed[] = [
     price: 540000,
     colors: [palette.cream, palette.taupe],
     sizes: clothingSizes,
-    images: [tshirt, modelTshirt],
+    images: ["cat-tshirt", "model-tshirt"],
     material: "پنبه و ویسکوز، لطیف و خنک",
     description:
       "پارچه‌ای سبک با درز کناری تمیز؛ زیر کت و بلیزر عالی می‌نشیند و در تنه کشیدگی ندارد.",
@@ -77,7 +70,7 @@ const seeds: Seed[] = [
     price: 620000,
     colors: [palette.offwhite, palette.charcoal],
     sizes: clothingSizes,
-    images: [modelTshirt, tshirt],
+    images: ["model-tshirt", "cat-tshirt"],
     material: "پنبه شانه‌زده",
     description: "خط شانه‌ی دقیق و آستین کوتاه استاندارد؛ پایه‌ای که هر فصل به کار می‌آید.",
   },
@@ -87,7 +80,7 @@ const seeds: Seed[] = [
     price: 580000,
     colors: [palette.sand, palette.cream],
     sizes: clothingSizes,
-    images: [tshirt, modelCrop],
+    images: ["cat-tshirt", "model-crop"],
     material: "ریب پنبه‌ای کشی",
     description: "بافت ریب باریک با کشش ملایم که بدن را نرم قالب می‌گیرد.",
   },
@@ -97,7 +90,7 @@ const seeds: Seed[] = [
     price: 720000,
     colors: [palette.cream, palette.taupe, palette.charcoal],
     sizes: clothingSizes,
-    images: [modelCrop, crop],
+    images: ["model-crop", "cat-crop"],
     material: "بافت ریب با نخ ویسکوز",
     description:
       "قد کوتاه با لبه‌ی کشی؛ روی شورت فاق‌بلند و دامن ماکسی هر دو خوش می‌نشیند.",
@@ -110,7 +103,7 @@ const seeds: Seed[] = [
     oldPrice: 950000,
     colors: [palette.offwhite, palette.sand],
     sizes: clothingSizes,
-    images: [crop, modelCrop],
+    images: ["cat-crop", "model-crop"],
     material: "پنبه استرچ",
     description: "آستین حجم‌دار کوتاه و یقه‌ی قاشقی؛ جزئیاتی کلاسیک با فرم امروزی.",
   },
@@ -120,7 +113,7 @@ const seeds: Seed[] = [
     price: 640000,
     colors: [palette.taupe, palette.cream],
     sizes: clothingSizes,
-    images: [crop, modelCrop],
+    images: ["cat-crop", "model-crop"],
     material: "جرسی پنبه‌ای",
     description: "بندهای قابل تنظیم و پشت ساده؛ سبک برای روزهای گرم.",
   },
@@ -130,7 +123,7 @@ const seeds: Seed[] = [
     price: 690000,
     colors: [palette.cream, palette.charcoal],
     sizes: clothingSizes,
-    images: [modelCrop, crop],
+    images: ["model-crop", "cat-crop"],
     material: "ریب نرم",
     description: "یقه‌ی باز افقی که خط شانه را کشیده نشان می‌دهد.",
   },
@@ -140,7 +133,7 @@ const seeds: Seed[] = [
     price: 980000,
     colors: [palette.sand, palette.cream, palette.charcoal],
     sizes: clothingSizes,
-    images: [shorts, modelCrop],
+    images: ["cat-shorts", "model-crop"],
     material: "کتان و پنبه، آستر ندارد",
     description:
       "فاق بلند با دو پیلی جلو و جیب مورب؛ خطی رسمی با راحتی پارچه‌ی نفس‌گیر.",
@@ -152,7 +145,7 @@ const seeds: Seed[] = [
     price: 620000,
     colors: [palette.cream, palette.taupe],
     sizes: clothingSizes,
-    images: [shorts, set],
+    images: ["cat-shorts", "cat-set"],
     material: "پنبه‌ی حلقوی",
     description: "کمر کشی با بند تنظیم؛ برای خانه و پیاده‌روی‌های کوتاه.",
   },
@@ -163,7 +156,7 @@ const seeds: Seed[] = [
     oldPrice: 1350000,
     colors: [palette.sand, palette.charcoal],
     sizes: clothingSizes,
-    images: [shorts, modelCrop],
+    images: ["cat-shorts", "model-crop"],
     material: "دنیم سبک ۱۱ اونس",
     description: "برش صاف با لبه‌ی تاشو و دوخت متضاد؛ کلاسیکی که کهنه نمی‌شود.",
   },
@@ -173,7 +166,7 @@ const seeds: Seed[] = [
     price: 890000,
     colors: [palette.cream, palette.sand],
     sizes: clothingSizes,
-    images: [shorts, set],
+    images: ["cat-shorts", "cat-set"],
     material: "کتان خالص",
     description: "چاک کوتاه کناری برای آزادی حرکت و افت بهتر پارچه.",
   },
@@ -183,7 +176,7 @@ const seeds: Seed[] = [
     price: 320000,
     colors: [palette.cream, palette.sand, palette.charcoal],
     sizes: sockSizes,
-    images: [socks, socks],
+    images: ["cat-socks", "cat-socks"],
     material: "۸۰٪ پنبه، ۱۷٪ پلی‌آمید، ۳٪ الاستان",
     description: "کف حوله‌ای نرم و لبه‌ی بدون اثر؛ بسته‌ی سه‌جفتی در رنگ‌های خنثی.",
   },
@@ -193,7 +186,7 @@ const seeds: Seed[] = [
     price: 240000,
     colors: [palette.cream, palette.taupe],
     sizes: sockSizes,
-    images: [socks, socks],
+    images: ["cat-socks", "cat-socks"],
     material: "پنبه ریب",
     description: "ساق تا نیمه‌ی ساق پا با کشی ملایم که پایین نمی‌آید.",
     isNew: true,
@@ -205,7 +198,7 @@ const seeds: Seed[] = [
     oldPrice: 450000,
     colors: [palette.offwhite, palette.sand],
     sizes: sockSizes,
-    images: [socks, socks],
+    images: ["cat-socks", "cat-socks"],
     material: "پنبه با سیلیکون پاشنه",
     description: "زیر کفش‌های تخت دیده نمی‌شود و پاشنه‌ی سیلیکونی سرنمی‌خورد.",
   },
@@ -215,7 +208,7 @@ const seeds: Seed[] = [
     price: 430000,
     colors: [palette.taupe, palette.charcoal],
     sizes: sockSizes,
-    images: [socks, socks],
+    images: ["cat-socks", "cat-socks"],
     material: "مرینوس و پنبه",
     description: "بافت ضخیم و گرم بدون خارش؛ برای روزهای سرد خانه.",
   },
@@ -226,7 +219,7 @@ const seeds: Seed[] = [
     oldPrice: 1980000,
     colors: [palette.sand, palette.cream],
     sizes: clothingSizes,
-    images: [set, modelCrop],
+    images: ["cat-set", "model-crop"],
     material: "ویسکوز و کتان",
     description: "ست دوتکه‌ی هم‌رنگ؛ با هم یا جدا از هم قابل استایل کردن.",
     isNew: true,
@@ -237,7 +230,7 @@ const seeds: Seed[] = [
     price: 1380000,
     colors: [palette.cream, palette.taupe],
     sizes: clothingSizes,
-    images: [set, tshirt],
+    images: ["cat-set", "cat-tshirt"],
     material: "پنبه‌ی نرم",
     description: "دوتکه‌ی راحت با دوخت تمیز؛ سبک و خنک برای خانه.",
   },
@@ -247,7 +240,7 @@ const seeds: Seed[] = [
     price: 1890000,
     colors: [palette.sand, palette.charcoal],
     sizes: clothingSizes,
-    images: [set, modelTshirt],
+    images: ["cat-set", "model-tshirt"],
     material: "ویسکوز مات",
     description: "پیراهن یقه‌برگردان و شلوار کمر کشی با افت روان.",
   },
@@ -257,7 +250,7 @@ const seeds: Seed[] = [
     price: 1740000,
     colors: [palette.cream, palette.sand],
     sizes: clothingSizes,
-    images: [set, crop],
+    images: ["cat-set", "cat-crop"],
     material: "ریب کشباف",
     description: "کراپ ریب همراه شورت هم‌بافت؛ ترکیبی مدرن با حس کلاسیک.",
   },
