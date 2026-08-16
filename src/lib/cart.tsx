@@ -7,7 +7,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { getProduct } from "@/data/products";
+import { useQuery } from "@tanstack/react-query";
+import { catalogQuery } from "@/lib/catalog";
 
 export type CartLine = {
   productId: string;
@@ -33,6 +34,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const { data: catalog } = useQuery({ ...catalogQuery, staleTime: 60_000 });
 
   useEffect(() => {
     try {
@@ -78,7 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const subtotal = lines.reduce((sum, line) => {
-      const product = getProduct(line.productId);
+      const product = catalog?.find((p) => p.id === line.productId);
       return product ? sum + product.price * line.quantity : sum;
     }, 0);
     return {
@@ -90,7 +92,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       remove,
       clear,
     };
-  }, [lines, add, setQuantity, remove, clear]);
+  }, [lines, catalog, add, setQuantity, remove, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

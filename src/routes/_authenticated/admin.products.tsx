@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ProductImageManager } from "@/components/admin/ProductImageManager";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
   component: AdminProducts,
@@ -24,7 +25,7 @@ type FormState = {
   old_price: string;
   sizes: string;
   colors: string;
-  images: string;
+  images: string[];
   material: string;
   description: string;
   stock: string;
@@ -39,7 +40,7 @@ const emptyForm: FormState = {
   old_price: "",
   sizes: "S, M, L",
   colors: "کرم #f0ebe3, تِراکوتا #b5654a",
-  images: "cat-tshirt",
+  images: ["cat-tshirt"],
   material: "",
   description: "",
   stock: "25",
@@ -56,7 +57,7 @@ function toForm(product: AdminProduct & { rawImages?: string[] }): FormState {
     old_price: product.oldPrice ? String(product.oldPrice) : "",
     sizes: product.sizes.join(", "),
     colors: product.colors.map((c) => `${c.name} ${c.hex}`).join(", "),
-    images: (product.rawImages ?? []).join(", "),
+    images: product.rawImages ?? [],
     material: product.material,
     description: product.description,
     stock: String(product.stock),
@@ -81,7 +82,7 @@ function parsePayload(form: FormState) {
         const hex = parts.pop() ?? "#cccccc";
         return { name: parts.join(" ") || "رنگ", hex };
       }),
-    images: form.images.split(",").map((s) => s.trim()).filter(Boolean),
+    images: form.images,
     material: form.material,
     description: form.description,
     stock: Number(form.stock),
@@ -219,13 +220,13 @@ function AdminProducts() {
             />
           </div>
           <div className="md:col-span-2">
-            <Label>تصاویر (کلید تصویر یا نشانی کامل، جدا شده با کاما)</Label>
-            <Input
-              dir="ltr"
-              value={form.images}
-              onChange={(e) => setForm({ ...form, images: e.target.value })}
-              className="mt-2 bg-background"
-            />
+            <Label>گالری تصاویر</Label>
+            <div className="mt-3">
+              <ProductImageManager
+                value={form.images}
+                onChange={(images) => setForm({ ...form, images })}
+              />
+            </div>
           </div>
           <div className="md:col-span-2">
             <Label>جنس</Label>
