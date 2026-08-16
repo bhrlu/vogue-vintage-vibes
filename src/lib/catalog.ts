@@ -69,9 +69,7 @@ type Row = {
 };
 
 export function toProduct(row: Row, signed?: Map<string, string>): AdminProduct {
-  const resolve = (reference: string) =>
-    (signed?.get(reference) ?? (isStoragePath(reference) ? undefined : undefined)) ??
-    img(reference);
+  const resolve = (reference: string) => signed?.get(reference) ?? img(reference);
   return {
     id: row.id,
     name: row.name,
