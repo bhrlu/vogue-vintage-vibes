@@ -1,9 +1,9 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Minus, Plus, Truck, RefreshCcw } from "lucide-react";
-import { categoryTitle, getProduct, products } from "@/data/products";
-import type { Product } from "@/data/products";
+import { categoryTitle } from "@/data/products";
+import { useCatalog } from "@/lib/catalog";
 import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
@@ -16,39 +16,66 @@ import {
 } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/product/$id")({
-  loader: ({ params }) => {
-    const product = getProduct(params.id);
-    if (!product) throw notFound();
-    return { product };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return {
-        meta: [{ title: "محصول یافت نشد — ساندِه" }, { name: "robots", content: "noindex" }],
-      };
-    }
-    const { product } = loaderData;
-    return {
-      meta: [
-        { title: `${product.name} — ساندِه` },
-        { name: "description", content: product.description },
-        { property: "og:title", content: `${product.name} — ساندِه` },
-        { property: "og:description", content: product.description },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      { title: "جزئیات محصول — ساندِه" },
+      {
+        name: "description",
+        content: "مشخصات، جنس پارچه، رنگ و سایزهای موجود این محصول ساندِه را ببینید.",
+      },
+      { property: "og:title", content: "جزئیات محصول — ساندِه" },
+      { property: "og:description", content: "مشخصات، رنگ و سایزهای موجود محصول." },
+      { property: "og:type", content: "product" },
+    ],
+  }),
   component: ProductPage,
 });
 
 function ProductPage() {
-  const { product } = Route.useLoaderData() as { product: Product };
+  const { id } = Route.useParams();
+  const { byId, products: allProducts, isLoading } = useCatalog();
+  const product = byId(id);
   const { add } = useCart();
   const [size, setSize] = useState<string | null>(null);
-  const [color, setColor] = useState(product.colors[0]?.name ?? "");
+  const [color, setColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [active, setActive] = useState(0);
 
-  const related = products
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <div className="grid gap-10 md:grid-cols-2">
+          <div className="aspect-[4/5] animate-pulse rounded-[1.5rem] bg-clay" />
+          <div className="space-y-4">
+            <div className="h-8 w-2/3 animate-pulse rounded bg-clay" />
+            <div className="h-4 w-1/3 animate-pulse rounded bg-clay" />
+            <div className="h-24 animate-pulse rounded bg-clay" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
+        <h1 className="text-3xl">محصول یافت نشد</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          این محصول حذف شده یا موقتاً موجود نیست.
+        </p>
+        <Link
+          to="/shop"
+          search={{}}
+          className="mt-8 inline-flex border border-foreground px-8 py-3 text-sm tracking-widest"
+        >
+          رفتن به فروشگاه
+        </Link>
+      </div>
+    );
+  }
+
+  const selectedColor = color ?? product.colors[0]?.name ?? "";
+  const related = allProducts
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
 
@@ -57,7 +84,7 @@ function ProductPage() {
       toast.error("لطفاً سایز را انتخاب کنید");
       return;
     }
-    add({ productId: product.id, size, color, quantity });
+    add({ productId: product.id, size, color: selectedColor, quantity });
     toast.success("به سبد خرید اضافه شد");
   };
 
@@ -121,7 +148,9 @@ function ProductPage() {
           <p className="mt-5 text-sm leading-7 text-muted-foreground">{product.description}</p>
 
           <div className="mt-8">
-            <p className="mb-3 text-xs tracking-[0.2em] text-muted-foreground">رنگ: {color}</p>
+          <p className="mb-3 text-xs tracking-[0.2em] text-muted-foreground">
+              رنگ: {selectedColor}
+            </p>
             <div className="flex gap-3">
               {product.colors.map((c) => (
                 <button
@@ -130,7 +159,7 @@ function ProductPage() {
                   onClick={() => setColor(c.name)}
                   aria-label={c.name}
                   className={`size-8 rounded-full border border-border ${
-                    color === c.name ? "ring-1 ring-foreground ring-offset-2" : ""
+                    selectedColor === c.name ? "ring-1 ring-foreground ring-offset-2" : ""
                   }`}
                   style={{ backgroundColor: c.hex }}
                 />
