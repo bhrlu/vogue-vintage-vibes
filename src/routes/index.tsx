@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
-import { categories, products } from "@/data/products";
+import { categories } from "@/data/products";
 import { ProductCard } from "@/components/ProductCard";
+import { img, useCatalog } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,7 +24,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const newest = products.filter((p) => p.isNew).slice(0, 3);
+  const { products } = useCatalog();
+  const newest = (products.filter((p) => p.isNew).length ? products.filter((p) => p.isNew) : products).slice(0, 3);
   const big = categories[0]!;
   const rest = categories.slice(1);
 
@@ -107,7 +109,7 @@ function Index() {
             className="group relative col-span-2 row-span-2 overflow-hidden rounded-[1.5rem] bg-clay"
           >
             <img
-              src={big.image}
+              src={img(big.image)}
               alt={big.title}
               loading="lazy"
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -127,7 +129,7 @@ function Index() {
               }`}
             >
               <img
-                src={category.image}
+                src={img(category.image)}
                 alt={category.title}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"

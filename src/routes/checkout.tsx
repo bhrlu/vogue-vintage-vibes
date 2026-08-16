@@ -2,12 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
-import { getProduct } from "@/data/products";
 import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { placeOrder } from "@/lib/orders";
-import { img, type AdminProduct } from "@/lib/catalog";
+import { useCatalog } from "@/lib/catalog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +31,7 @@ const FREE_SHIPPING_FROM = 2000000;
 function CheckoutPage() {
   const { lines, subtotal, clear } = useCart();
   const { user, loading } = useAuth();
+  const { byId } = useCatalog();
   const [done, setDone] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const shipping = subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
@@ -89,14 +89,7 @@ function CheckoutPage() {
               const order = await placeOrder({
                 userId: user.id,
                 lines,
-                products: lines.map((line) => {
-                  const product = getProduct(line.productId);
-                  if (!product) return undefined;
-                  return {
-                    ...product,
-                    images: product.images.map(img),
-                  } as unknown as AdminProduct;
-                }),
+                products: lines.map((line) => byId(line.productId)),
                 subtotal,
                 discount: 0,
                 shipping,
@@ -180,7 +173,7 @@ function CheckoutPage() {
           <h2 className="text-xl">سفارش شما</h2>
           <ul className="mt-5 space-y-4 text-sm">
             {lines.map((line) => {
-              const product = getProduct(line.productId);
+              const product = byId(line.productId);
               if (!product) return null;
               return (
                 <li

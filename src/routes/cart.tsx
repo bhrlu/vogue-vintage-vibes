@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { getProduct } from "@/data/products";
+import { useCatalog } from "@/lib/catalog";
 import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ const FREE_SHIPPING_FROM = 2000000;
 
 function CartPage() {
   const { lines, subtotal, setQuantity, remove } = useCart();
+  const { byId } = useCatalog();
   const [code, setCode] = useState("");
   const [discount, setDiscount] = useState(0);
 
@@ -67,7 +68,7 @@ function CartPage() {
       <div className="mt-10 grid gap-12 md:grid-cols-[1fr_320px]">
         <ul className="divide-y divide-border border-y border-border">
           {lines.map((line, index) => {
-            const product = getProduct(line.productId);
+            const product = byId(line.productId);
             if (!product) return null;
             return (
               <li key={`${line.productId}-${line.size}-${line.color}`} className="flex gap-4 py-6">
