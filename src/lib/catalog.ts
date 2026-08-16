@@ -29,6 +29,12 @@ export function img(reference: string | undefined): string {
 
 export const PRODUCT_BUCKET = "product-images";
 
+/** Resolve any list of stored references (asset keys, URLs, storage paths) to displayable URLs. */
+export async function resolveImageUrls(references: string[]): Promise<string[]> {
+  const signed = await signStorageImages([{ images: references }]);
+  return references.map((reference) => signed.get(reference) ?? img(reference));
+}
+
 /** A stored reference that lives in the product-images storage bucket. */
 export function isStoragePath(reference: string): boolean {
   return reference.startsWith("uploads/");
