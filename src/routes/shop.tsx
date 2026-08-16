@@ -1,14 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
-import {
-  allColors,
-  allSizes,
-  categories,
-  priceBounds,
-  products,
-  type CategoryId,
-} from "@/data/products";
+import { categories, type CategoryId } from "@/data/products";
+import { useCatalog } from "@/lib/catalog";
 import { formatToman, toFa } from "@/lib/format";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -43,10 +37,18 @@ type SortKey = "new" | "cheap" | "expensive";
 
 function ShopPage() {
   const { category } = Route.useSearch();
+  const {
+    products,
+    allSizes,
+    allColors,
+    priceBounds,
+    isLoading,
+  } = useCatalog();
   const [sizes, setSizes] = useState<string[]>([]);
   const [colors, setColors] = useState<string[]>([]);
-  const [maxPrice, setMaxPrice] = useState(priceBounds.max);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [sort, setSort] = useState<SortKey>("new");
+  const priceCap = maxPrice ?? priceBounds.max;
 
   const toggle = (value: string, list: string[], set: (v: string[]) => void) =>
     set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
@@ -54,7 +56,7 @@ function ShopPage() {
   const visible = useMemo(() => {
     const filtered = products.filter((p) => {
       if (category && p.category !== category) return false;
-      if (p.price > maxPrice) return false;
+      if (p.price > priceCap) return false;
       if (sizes.length && !p.sizes.some((s) => sizes.includes(s))) return false;
       if (colors.length && !p.colors.some((c) => colors.includes(c.name))) return false;
       return true;
@@ -64,13 +66,13 @@ function ShopPage() {
     if (sort === "expensive") sorted.sort((a, b) => b.price - a.price);
     if (sort === "new") sorted.sort((a, b) => Number(!!b.isNew) - Number(!!a.isNew));
     return sorted;
-  }, [category, maxPrice, sizes, colors, sort]);
+  }, [products, category, priceCap, sizes, colors, sort]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
       <h1 className="text-4xl">فروشگاه</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {toFa(visible.length)} محصول در دسترس
+        {isLoading ? "در حال بارگذاری…" : `${toFa(visible.length)} محصول در دسترس`}
       </p>
 
       <div className="mt-8 flex flex-wrap items-center gap-2 border-b border-border pb-6">
@@ -156,10 +158,10 @@ function ShopPage() {
               min={priceBounds.min}
               max={priceBounds.max}
               step={10000}
-              value={[maxPrice]}
+              value={[priceCap]}
               onValueChange={(v) => setMaxPrice(v[0] ?? priceBounds.max)}
             />
-            <p className="mt-3 text-sm">{formatToman(maxPrice)} تومان</p>
+            <p className="mt-3 text-sm">{formatToman(priceCap)} تومان</p>
           </div>
 
           <div>
@@ -188,7 +190,13 @@ function ShopPage() {
         </aside>
 
         <div>
-          {visible.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="aspect-[4/5] animate-pulse rounded-[1.25rem] bg-clay" />
+              ))}
+            </div>
+          ) : visible.length === 0 ? (
             <div className="border border-dashed border-border p-12 text-center">
               <p className="text-muted-foreground">محصولی با این فیلترها پیدا نشد.</p>
               <Button
@@ -197,7 +205,7 @@ function ShopPage() {
                 onClick={() => {
                   setSizes([]);
                   setColors([]);
-                  setMaxPrice(priceBounds.max);
+                  setMaxPrice(null);
                 }}
               >
                 حذف فیلترها
