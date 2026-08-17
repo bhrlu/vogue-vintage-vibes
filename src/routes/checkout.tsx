@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -32,31 +32,9 @@ function CheckoutPage() {
   const { lines, subtotal, clear } = useCart();
   const { user, loading } = useAuth();
   const { byId } = useCatalog();
-  const [done, setDone] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const shipping = subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
-
-  if (done) {
-    return (
-      <div className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
-        <CheckCircle2 className="mx-auto size-12 text-primary" />
-        <h1 className="mt-6 text-3xl">سفارش شما ثبت شد</h1>
-        <p className="mt-3 text-sm leading-7 text-muted-foreground">
-          شماره سفارش: {toFa(done)}
-          <br />
-          این یک نسخه نمایشی است و پرداخت واقعی انجام نشده. به‌زودی برای هماهنگی ارسال با شما
-          تماس می‌گیریم.
-        </p>
-        <Link
-          to="/shop"
-          search={{}}
-          className="mt-8 inline-flex border border-foreground px-8 py-3 text-sm tracking-widest transition-colors hover:bg-foreground hover:text-background"
-        >
-          ادامه خرید
-        </Link>
-      </div>
-    );
-  }
 
   if (lines.length === 0) {
     return (
@@ -105,7 +83,7 @@ function CheckoutPage() {
                 note: String(data.get("note") ?? "") || undefined,
               });
               clear();
-              setDone(order.order_number);
+              navigate({ to: "/payment/$orderId", params: { orderId: order.id } });
             } catch (error) {
               toast.error(error instanceof Error ? error.message : "ثبت سفارش ناموفق بود");
             } finally {
@@ -153,7 +131,7 @@ function CheckoutPage() {
               disabled={busy}
               className="h-11 w-full rounded-none text-sm tracking-widest"
             >
-              ثبت سفارش
+              {busy ? "در حال انتقال به درگاه…" : "ثبت سفارش و پرداخت"}
             </Button>
           ) : (
             <Link
@@ -164,8 +142,10 @@ function CheckoutPage() {
               {loading ? "..." : "برای ثبت سفارش وارد شوید"}
             </Link>
           )}
-          <p className="text-xs text-muted-foreground">
-            سفارش شما در حساب کاربری ذخیره و قابل پیگیری است؛ درگاه پرداخت واقعی هنوز متصل نشده.
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="size-4 shrink-0 text-sage-deep" />
+            پس از ثبت سفارش به درگاه پرداخت آزمایشی منتقل می‌شوید؛ نتیجه‌ی پرداخت روی سفارش ثبت
+            و در حساب کاربری قابل پیگیری است.
           </p>
         </form>
 

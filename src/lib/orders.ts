@@ -46,7 +46,7 @@ export async function placeOrder(input: {
       shipping: input.shipping,
       total,
       payment_method: input.paymentMethod,
-      payment_status: input.paymentMethod === "online" ? "paid" : "unpaid",
+      payment_status: "unpaid",
       status: "pending",
       shipping_address: input.address,
       note: input.note ?? null,
@@ -73,16 +73,6 @@ export async function placeOrder(input: {
   });
   const { error: itemsError } = await supabase.from("order_items").insert(items);
   if (itemsError) throw itemsError;
-
-  const { error: paymentError } = await supabase.from("payments").insert({
-    order_id: order.id,
-    user_id: input.userId,
-    amount: total,
-    method: input.paymentMethod,
-    status: input.paymentMethod === "online" ? "succeeded" : "pending",
-    reference: `SANDE-${order.order_number}`,
-  });
-  if (paymentError) throw paymentError;
 
   return order;
 }
