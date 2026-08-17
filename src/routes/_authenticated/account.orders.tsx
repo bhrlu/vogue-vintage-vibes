@@ -68,7 +68,18 @@ function OrdersTab() {
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-sm">مبلغ نهایی: {formatToman(order.total)} تومان</p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm">مبلغ نهایی: {formatToman(order.total)} تومان</p>
+            {order.payment_status !== "paid" && order.status !== "cancelled" && (
+              <Link
+                to="/payment/$orderId"
+                params={{ orderId: order.id }}
+                className="border border-foreground px-5 py-2 text-xs tracking-widest transition-colors hover:bg-foreground hover:text-background"
+              >
+                پرداخت سفارش
+              </Link>
+            )}
+          </div>
         </li>
       ))}
     </ul>
