@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
@@ -32,31 +32,9 @@ function CheckoutPage() {
   const { lines, subtotal, clear } = useCart();
   const { user, loading } = useAuth();
   const { byId } = useCatalog();
-  const [done, setDone] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const shipping = subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
-
-  if (done) {
-    return (
-      <div className="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
-        <CheckCircle2 className="mx-auto size-12 text-primary" />
-        <h1 className="mt-6 text-3xl">سفارش شما ثبت شد</h1>
-        <p className="mt-3 text-sm leading-7 text-muted-foreground">
-          شماره سفارش: {toFa(done)}
-          <br />
-          این یک نسخه نمایشی است و پرداخت واقعی انجام نشده. به‌زودی برای هماهنگی ارسال با شما
-          تماس می‌گیریم.
-        </p>
-        <Link
-          to="/shop"
-          search={{}}
-          className="mt-8 inline-flex border border-foreground px-8 py-3 text-sm tracking-widest transition-colors hover:bg-foreground hover:text-background"
-        >
-          ادامه خرید
-        </Link>
-      </div>
-    );
-  }
 
   if (lines.length === 0) {
     return (
