@@ -131,7 +131,7 @@ function CheckoutPage() {
               disabled={busy}
               className="h-11 w-full rounded-none text-sm tracking-widest"
             >
-              ثبت سفارش
+              {busy ? "در حال انتقال به درگاه…" : "ثبت سفارش و پرداخت"}
             </Button>
           ) : (
             <Link
@@ -142,8 +142,10 @@ function CheckoutPage() {
               {loading ? "..." : "برای ثبت سفارش وارد شوید"}
             </Link>
           )}
-          <p className="text-xs text-muted-foreground">
-            سفارش شما در حساب کاربری ذخیره و قابل پیگیری است؛ درگاه پرداخت واقعی هنوز متصل نشده.
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="size-4 shrink-0 text-sage-deep" />
+            پس از ثبت سفارش به درگاه پرداخت آزمایشی منتقل می‌شوید؛ نتیجه‌ی پرداخت روی سفارش ثبت
+            و در حساب کاربری قابل پیگیری است.
           </p>
         </form>
 
