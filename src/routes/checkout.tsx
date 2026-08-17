@@ -83,7 +83,7 @@ function CheckoutPage() {
                 note: String(data.get("note") ?? "") || undefined,
               });
               clear();
-              setDone(order.order_number);
+              navigate({ to: "/payment/$orderId", params: { orderId: order.id } });
             } catch (error) {
               toast.error(error instanceof Error ? error.message : "ثبت سفارش ناموفق بود");
             } finally {
