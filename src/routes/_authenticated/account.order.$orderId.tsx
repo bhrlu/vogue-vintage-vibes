@@ -4,6 +4,7 @@ import { ArrowRight, Check, CreditCard, Package, Truck, ClipboardList } from "lu
 import { supabase } from "@/integrations/supabase/client";
 import { formatToman, toFa } from "@/lib/format";
 import { ORDER_STATUS, PAYMENT_STATUS } from "@/lib/orders";
+import { CancelOrderButton } from "@/components/CancelOrderButton";
 
 export const Route = createFileRoute("/_authenticated/account/order/$orderId")({
   head: () => ({
@@ -132,15 +133,20 @@ function OrderStatusPage() {
             </span>
           </p>
           <p className="mt-3">مبلغ نهایی: {formatToman(data.total)} تومان</p>
-          {!paid && !cancelled && (
-            <Link
-              to="/payment/$orderId"
-              params={{ orderId: data.id }}
-              className="mt-4 inline-block border border-foreground px-5 py-2 text-xs tracking-widest transition-colors hover:bg-foreground hover:text-background"
-            >
-              پرداخت سفارش
-            </Link>
-          )}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {!paid && !cancelled && (
+              <Link
+                to="/payment/$orderId"
+                params={{ orderId: data.id }}
+                className="border border-foreground px-5 py-2 text-xs tracking-widest transition-colors hover:bg-foreground hover:text-background"
+              >
+                پرداخت سفارش
+              </Link>
+            )}
+            {!["shipped", "delivered", "cancelled"].includes(data.status) && (
+              <CancelOrderButton orderId={data.id} />
+            )}
+          </div>
         </div>
         <div className="rounded-3xl border border-border p-5 text-sm">
           <h3 className="text-base">اقلام</h3>
