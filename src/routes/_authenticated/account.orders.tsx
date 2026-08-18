@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatToman, toFa } from "@/lib/format";
 import { ORDER_STATUS, PAYMENT_STATUS } from "@/lib/orders";
+import { CancelOrderButton } from "@/components/CancelOrderButton";
 
 export const Route = createFileRoute("/_authenticated/account/orders")({
   component: OrdersTab,
@@ -86,6 +87,9 @@ function OrdersTab() {
               >
                 پرداخت سفارش
               </Link>
+            )}
+            {!["shipped", "delivered", "cancelled"].includes(order.status) && (
+              <CancelOrderButton orderId={order.id} />
             )}
             </div>
           </div>
