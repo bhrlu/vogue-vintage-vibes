@@ -1,9 +1,5 @@
 # Chic Threads Studio
 
-یک سایت فروشگاه فروش آنلاین لباس زنانه ( تی شرت و کراپ و شورت و جوراب و....) با تم مدرن و ترکیب کلاسیک بزن
-اگر سوالی داری بپرس بعد پیاده سازی کن
-با vue3.js میتونی پیاده سازی کنی؟
-
 This project was built with [Lovable](https://lovable.dev).
 
 ## Build with Lovable
