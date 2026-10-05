@@ -9,18 +9,23 @@ import {
 } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { catalogQuery } from "@/lib/catalog";
+import { useWholesale } from "@/lib/wholesale";
 
 export type CartLine = {
   productId: string;
   size: string;
   color: string;
   quantity: number;
+  /** Wholesale assorted pack line; quantity = number of packs. */
+  pack?: boolean;
 };
 
 type CartContextValue = {
   lines: CartLine[];
   count: number;
   subtotal: number;
+  hasPacks: boolean;
+  unitPrice: (line: CartLine) => number;
   add: (line: CartLine) => void;
   setQuantity: (index: number, quantity: number) => void;
   remove: (index: number) => void;
@@ -35,6 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const { data: catalog } = useQuery({ ...catalogQuery, staleTime: 60_000 });
+  const { terms } = useWholesale();
 
   useEffect(() => {
     try {
@@ -55,7 +61,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLines((current) => {
       const index = current.findIndex(
         (l) =>
-          l.productId === line.productId && l.size === line.size && l.color === line.color,
+          l.productId === line.productId && l.size === line.size && l.color === line.color && !!l.pack === !!line.pack,
       );
       if (index === -1) return [...current, line];
       return current.map((l, i) =>
@@ -67,7 +73,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const setQuantity = useCallback((index: number, quantity: number) => {
     setLines((current) =>
       current.map((line, i) =>
-        i === index ? { ...line, quantity: Math.max(1, Math.min(20, quantity)) } : line,
+        i === index ? { ...line, quantity: Math.max(1, Math.min(line.pack ? 200 : 20, quantity)) } : line,
       ),
     );
   }, []);
@@ -79,12 +85,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clear = useCallback(() => setLines([]), []);
 
   const value = useMemo<CartContextValue>(() => {
-    const subtotal = lines.reduce((sum, line) => {
-      const product = catalog?.find((p) => p.id === line.productId);
-      return product ? sum + product.price * line.quantity : sum;
-    }, 0);
+    const unitPrice = (line: CartLine) => {
+      if (line.pack) return terms.get(line.productId)?.pack_price ?? 0;
+      return catalog?.find((p) => p.id === line.productId)?.price ?? 0;
+    };
+    const subtotal = lines.reduce((sum, line) => sum + unitPrice(line) * line.quantity, 0);
     return {
       lines,
+      hasPacks: lines.some((l) => l.pack),
+      unitPrice,
       count: lines.reduce((sum, line) => sum + line.quantity, 0),
       subtotal,
       add,
@@ -92,7 +101,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       remove,
       clear,
     };
-  }, [lines, catalog, add, setQuantity, remove, clear]);
+  }, [lines, catalog, terms, add, setQuantity, remove, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

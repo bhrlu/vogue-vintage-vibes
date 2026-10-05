@@ -8,6 +8,7 @@ type AuthValue = {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  isWholesale: boolean;
   profile: { full_name: string | null; phone: string | null; avatar_url: string | null } | null;
 };
 
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthValue>({
   session: null,
   loading: true,
   isAdmin: false,
+  isWholesale: false,
   profile: null,
 });
 
@@ -51,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return {
         profile: profile.data ?? null,
         isAdmin: (roles.data ?? []).some((r) => r.role === "admin"),
+        isWholesale: (roles.data ?? []).some((r) => r.role === "wholesale"),
       };
     },
   });
@@ -62,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         loading,
         isAdmin: data?.isAdmin ?? false,
+        isWholesale: data?.isWholesale ?? false,
         profile: data?.profile ?? null,
       }}
     >
