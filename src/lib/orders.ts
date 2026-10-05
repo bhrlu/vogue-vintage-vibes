@@ -30,6 +30,8 @@ export async function placeOrder(input: {
   lines: CartLine[];
   products: (AdminProduct | undefined)[];
   subtotal: number;
+  prices: number[];
+  isWholesale?: boolean;
   discount: number;
   shipping: number;
   paymentMethod: "online" | "cod";
@@ -50,6 +52,7 @@ export async function placeOrder(input: {
       status: "pending",
       shipping_address: input.address,
       note: input.note ?? null,
+      is_wholesale: input.isWholesale ?? false,
     })
     .select("id, order_number, total")
     .single();
@@ -63,7 +66,7 @@ export async function placeOrder(input: {
         order_id: order.id,
         product_id: product.id,
         name: product.name,
-        price: product.price,
+        price: input.prices[index] ?? product.price,
         size: line.size,
         color: line.color,
         image: product.images[0] ?? null,

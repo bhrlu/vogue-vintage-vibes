@@ -1,10 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import type { Product } from "@/data/products";
 import { categoryTitle } from "@/data/products";
-import { formatToman } from "@/lib/format";
+import { formatToman, toFa } from "@/lib/format";
+import { useWholesale } from "@/lib/wholesale";
 
 export function ProductCard({ product }: { product: Product }) {
   const [first, second] = product.images;
+  const { canBuyWholesale, terms } = useWholesale();
+  const pack = canBuyWholesale ? terms.get(product.id) : undefined;
 
   return (
     <Link
@@ -52,6 +55,11 @@ export function ProductCard({ product }: { product: Product }) {
             </span>
           )}
         </p>
+        {pack && (
+          <p className="mt-1 inline-flex rounded-full bg-sage/15 px-2.5 py-0.5 text-[11px] text-sage-deep">
+            همکار: پک {toFa(pack.pack_size)}تایی {formatToman(pack.pack_price)} تومان
+          </p>
+        )}
       </div>
     </Link>
   );

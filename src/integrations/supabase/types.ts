@@ -141,6 +141,7 @@ export type Database = {
           created_at: string
           discount: number
           id: string
+          is_wholesale: boolean
           note: string | null
           order_number: string
           payment_method: string
@@ -157,6 +158,7 @@ export type Database = {
           created_at?: string
           discount?: number
           id?: string
+          is_wholesale?: boolean
           note?: string | null
           order_number?: string
           payment_method?: string
@@ -173,6 +175,7 @@ export type Database = {
           created_at?: string
           discount?: number
           id?: string
+          is_wholesale?: boolean
           note?: string | null
           order_number?: string
           payment_method?: string
@@ -224,6 +227,41 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_wholesale: {
+        Row: {
+          min_packs: number
+          pack_description: string
+          pack_price: number
+          pack_size: number
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          min_packs?: number
+          pack_description?: string
+          pack_price: number
+          pack_size?: number
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          min_packs?: number
+          pack_description?: string
+          pack_price?: number
+          pack_size?: number
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_wholesale_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -368,6 +406,60 @@ export type Database = {
         }
         Relationships: []
       }
+      wholesale_applications: {
+        Row: {
+          address: string
+          admin_note: string | null
+          business_name: string
+          city: string
+          created_at: string
+          description: string | null
+          id: string
+          national_id: string | null
+          owner_name: string
+          phone: string
+          province: string
+          social_link: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string
+          admin_note?: string | null
+          business_name: string
+          city: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          national_id?: string | null
+          owner_name: string
+          phone: string
+          province: string
+          social_link?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          admin_note?: string | null
+          business_name?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          national_id?: string | null
+          owner_name?: string
+          phone?: string
+          province?: string
+          social_link?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -380,9 +472,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_wholesale_or_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "customer"
+      app_role: "admin" | "customer" | "wholesale"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -510,7 +603,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "customer"],
+      app_role: ["admin", "customer", "wholesale"],
     },
   },
 } as const

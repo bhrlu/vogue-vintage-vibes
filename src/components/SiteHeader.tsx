@@ -8,6 +8,7 @@ import { categories } from "@/data/products";
 const navLinks = [
   { to: "/", label: "خانه" },
   { to: "/shop", label: "فروشگاه" },
+  { to: "/wholesale", label: "خرید عمده" },
   { to: "/about", label: "درباره ما" },
   { to: "/contact", label: "تماس" },
 ] as const;

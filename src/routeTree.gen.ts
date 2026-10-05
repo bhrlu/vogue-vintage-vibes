@@ -17,6 +17,7 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as WholesaleRouteImport } from './routes/wholesale'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
@@ -25,10 +26,12 @@ import { Route as AuthenticatedAccountAddressesRouteImport } from './routes/_aut
 import { Route as AuthenticatedAccountFavoritesRouteImport } from './routes/_authenticated/account.favorites'
 import { Route as AuthenticatedAccountOrdersRouteImport } from './routes/_authenticated/account.orders'
 import { Route as AuthenticatedAccountPaymentsRouteImport } from './routes/_authenticated/account.payments'
+import { Route as AuthenticatedAccountWholesaleRouteImport } from './routes/_authenticated/account.wholesale'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminWholesaleRouteImport } from './routes/_authenticated/admin.wholesale'
 import { Route as AuthenticatedPaymentOrderIdRouteImport } from './routes/_authenticated/payment.$orderId'
 import { Route as AuthenticatedAccountOrderOrderIdRouteImport } from './routes/_authenticated/account.order.$orderId'
 
@@ -69,6 +72,11 @@ const ContactRoute = ContactRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WholesaleRoute = WholesaleRouteImport.update({
+  id: '/wholesale',
+  path: '/wholesale',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
@@ -116,6 +124,12 @@ const AuthenticatedAccountPaymentsRoute =
     path: '/payments',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const AuthenticatedAccountWholesaleRoute =
+  AuthenticatedAccountWholesaleRouteImport.update({
+    id: '/wholesale',
+    path: '/wholesale',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -138,6 +152,12 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminWholesaleRoute =
+  AuthenticatedAdminWholesaleRouteImport.update({
+    id: '/wholesale',
+    path: '/wholesale',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedPaymentOrderIdRoute =
   AuthenticatedPaymentOrderIdRouteImport.update({
     id: '/payment/$orderId',
@@ -159,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/wholesale': typeof WholesaleRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/product/$id': typeof ProductIdRoute
@@ -166,9 +187,11 @@ export interface FileRoutesByFullPath {
   '/account/favorites': typeof AuthenticatedAccountFavoritesRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
+  '/account/wholesale': typeof AuthenticatedAccountWholesaleRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/wholesale': typeof AuthenticatedAdminWholesaleRoute
   '/payment/$orderId': typeof AuthenticatedPaymentOrderIdRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -182,14 +205,17 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/wholesale': typeof WholesaleRoute
   '/product/$id': typeof ProductIdRoute
   '/account/addresses': typeof AuthenticatedAccountAddressesRoute
   '/account/favorites': typeof AuthenticatedAccountFavoritesRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
+  '/account/wholesale': typeof AuthenticatedAccountWholesaleRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/wholesale': typeof AuthenticatedAdminWholesaleRoute
   '/payment/$orderId': typeof AuthenticatedPaymentOrderIdRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -205,6 +231,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/shop': typeof ShopRoute
+  '/wholesale': typeof WholesaleRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/product/$id': typeof ProductIdRoute
@@ -212,9 +239,11 @@ export interface FileRoutesById {
   '/_authenticated/account/favorites': typeof AuthenticatedAccountFavoritesRoute
   '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
+  '/_authenticated/account/wholesale': typeof AuthenticatedAccountWholesaleRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/wholesale': typeof AuthenticatedAdminWholesaleRoute
   '/_authenticated/payment/$orderId': typeof AuthenticatedPaymentOrderIdRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -230,6 +259,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/shop'
+    | '/wholesale'
     | '/account'
     | '/admin'
     | '/product/$id'
@@ -237,9 +267,11 @@ export interface FileRouteTypes {
     | '/account/favorites'
     | '/account/orders'
     | '/account/payments'
+    | '/account/wholesale'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/users'
+    | '/admin/wholesale'
     | '/payment/$orderId'
     | '/account/'
     | '/admin/'
@@ -253,14 +285,17 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/shop'
+    | '/wholesale'
     | '/product/$id'
     | '/account/addresses'
     | '/account/favorites'
     | '/account/orders'
     | '/account/payments'
+    | '/account/wholesale'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/users'
+    | '/admin/wholesale'
     | '/payment/$orderId'
     | '/account'
     | '/admin'
@@ -275,6 +310,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/shop'
+    | '/wholesale'
     | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/product/$id'
@@ -282,9 +318,11 @@ export interface FileRouteTypes {
     | '/_authenticated/account/favorites'
     | '/_authenticated/account/orders'
     | '/_authenticated/account/payments'
+    | '/_authenticated/account/wholesale'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/users'
+    | '/_authenticated/admin/wholesale'
     | '/_authenticated/payment/$orderId'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
@@ -300,6 +338,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   ShopRoute: typeof ShopRoute
+  WholesaleRoute: typeof WholesaleRoute
   ProductIdRoute: typeof ProductIdRoute
 }
 
@@ -361,6 +400,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wholesale': {
+      id: '/wholesale'
+      path: '/wholesale'
+      fullPath: '/wholesale'
+      preLoaderRoute: typeof WholesaleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/account': {
       id: '/_authenticated/account'
       path: '/account'
@@ -417,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountPaymentsRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/_authenticated/account/wholesale': {
+      id: '/_authenticated/account/wholesale'
+      path: '/wholesale'
+      fullPath: '/account/wholesale'
+      preLoaderRoute: typeof AuthenticatedAccountWholesaleRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -445,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/wholesale': {
+      id: '/_authenticated/admin/wholesale'
+      path: '/wholesale'
+      fullPath: '/admin/wholesale'
+      preLoaderRoute: typeof AuthenticatedAdminWholesaleRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/payment/$orderId': {
       id: '/_authenticated/payment/$orderId'
       path: '/payment/$orderId'
@@ -467,6 +527,7 @@ interface AuthenticatedAccountRouteChildren {
   AuthenticatedAccountFavoritesRoute: typeof AuthenticatedAccountFavoritesRoute
   AuthenticatedAccountOrdersRoute: typeof AuthenticatedAccountOrdersRoute
   AuthenticatedAccountPaymentsRoute: typeof AuthenticatedAccountPaymentsRoute
+  AuthenticatedAccountWholesaleRoute: typeof AuthenticatedAccountWholesaleRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
   AuthenticatedAccountOrderOrderIdRoute: typeof AuthenticatedAccountOrderOrderIdRoute
 }
@@ -476,6 +537,7 @@ const AuthenticatedAccountRouteChildren: AuthenticatedAccountRouteChildren = {
   AuthenticatedAccountFavoritesRoute: AuthenticatedAccountFavoritesRoute,
   AuthenticatedAccountOrdersRoute: AuthenticatedAccountOrdersRoute,
   AuthenticatedAccountPaymentsRoute: AuthenticatedAccountPaymentsRoute,
+  AuthenticatedAccountWholesaleRoute: AuthenticatedAccountWholesaleRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
   AuthenticatedAccountOrderOrderIdRoute: AuthenticatedAccountOrderOrderIdRoute,
 }
@@ -487,6 +549,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminWholesaleRoute: typeof AuthenticatedAdminWholesaleRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -494,6 +557,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminWholesaleRoute: AuthenticatedAdminWholesaleRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
@@ -524,6 +588,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   ShopRoute: ShopRoute,
+  WholesaleRoute: WholesaleRoute,
   ProductIdRoute: ProductIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -7,6 +7,7 @@ import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { placeOrder } from "@/lib/orders";
 import { useCatalog } from "@/lib/catalog";
+import { WHOLESALE_MIN_ORDER } from "@/lib/wholesale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,12 +30,13 @@ const SHIPPING = 89000;
 const FREE_SHIPPING_FROM = 2000000;
 
 function CheckoutPage() {
-  const { lines, subtotal, clear } = useCart();
+  const { lines, subtotal, clear, unitPrice, hasPacks } = useCart();
   const { user, loading } = useAuth();
   const { byId } = useCatalog();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
-  const shipping = subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
+  const shipping = hasPacks ? 0 : subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
+  const belowMin = hasPacks && subtotal < WHOLESALE_MIN_ORDER;
 
   if (lines.length === 0) {
     return (
@@ -61,6 +63,10 @@ function CheckoutPage() {
           onSubmit={async (event) => {
             event.preventDefault();
             if (!user) return;
+            if (belowMin) {
+              toast.error(`حداقل مبلغ سفارش عمده ${formatToman(WHOLESALE_MIN_ORDER)} تومان است`);
+              return;
+            }
             const data = new FormData(event.currentTarget as HTMLFormElement);
             setBusy(true);
             try {
@@ -69,6 +75,8 @@ function CheckoutPage() {
                 lines,
                 products: lines.map((line) => byId(line.productId)),
                 subtotal,
+                prices: lines.map(unitPrice),
+                isWholesale: hasPacks,
                 discount: 0,
                 shipping,
                 paymentMethod: "online",
@@ -80,7 +88,10 @@ function CheckoutPage() {
                   postal_code: String(data.get("postal") ?? ""),
                   line: String(data.get("address") ?? ""),
                 },
-                note: String(data.get("note") ?? "") || undefined,
+                note:
+                  [hasPacks ? "سفارش عمده — ارسال با باربری" : "", String(data.get("note") ?? "")]
+                    .filter(Boolean)
+                    .join(" | ") || undefined,
               });
               clear();
               navigate({ to: "/payment/$orderId", params: { orderId: order.id } });
@@ -164,10 +175,10 @@ function CheckoutPage() {
                     {product.name} × {toFa(line.quantity)}
                     <br />
                     <span className="text-xs">
-                      سایز {toFa(line.size)} · {line.color}
+                      {line.pack ? "پک جور (عمده)" : `سایز ${toFa(line.size)} · ${line.color}`}
                     </span>
                   </span>
-                  <span>{formatToman(product.price * line.quantity)}</span>
+                  <span>{formatToman(unitPrice(line) * line.quantity)}</span>
                 </li>
               );
             })}
