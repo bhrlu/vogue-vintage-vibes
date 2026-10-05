@@ -8,6 +8,7 @@ import { formatToman, toFa } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
+import { WholesaleBox } from "@/components/WholesaleBox";
 import {
   Accordion,
   AccordionContent,
@@ -211,6 +212,8 @@ function ProductPage() {
               افزودن به سبد خرید
             </Button>
           </div>
+
+          <WholesaleBox productId={product.id} />
 
           <div className="mt-6 space-y-2 text-xs text-muted-foreground">
             <p className="flex items-center gap-2">
