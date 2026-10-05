@@ -19,6 +19,7 @@ const tabs = [
   { to: "/admin/products", label: "محصولات", exact: false },
   { to: "/admin/orders", label: "سفارش‌ها", exact: false },
   { to: "/admin/users", label: "کاربران", exact: false },
+  { to: "/admin/wholesale", label: "عمده‌فروشی", exact: false },
 ] as const;
 
 function AdminLayout() {

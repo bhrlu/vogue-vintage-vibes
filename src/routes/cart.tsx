@@ -25,12 +25,12 @@ const SHIPPING = 89000;
 const FREE_SHIPPING_FROM = 2000000;
 
 function CartPage() {
-  const { lines, subtotal, setQuantity, remove } = useCart();
+  const { lines, subtotal, setQuantity, remove, unitPrice, hasPacks } = useCart();
   const { byId } = useCatalog();
   const [code, setCode] = useState("");
   const [discount, setDiscount] = useState(0);
 
-  const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
+  const shipping = hasPacks || subtotal === 0 || subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING;
   const total = Math.max(0, subtotal - discount) + shipping;
 
   const applyCode = () => {
@@ -85,7 +85,7 @@ function CartPage() {
                     <h2 className="font-display text-lg">{product.name}</h2>
                   </Link>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    سایز {toFa(line.size)} · رنگ {line.color}
+                    {line.pack ? "پک جور عمده · تعداد بسته" : `سایز ${toFa(line.size)} · رنگ ${line.color}`}
                   </p>
                   <div className="mt-4 flex items-center gap-4">
                     <div className="flex items-center border border-border">
@@ -117,7 +117,7 @@ function CartPage() {
                   </div>
                 </div>
                 <p className="shrink-0 text-sm">
-                  {formatToman(product.price * line.quantity)} تومان
+                  {formatToman(unitPrice(line) * line.quantity)} تومان
                 </p>
               </li>
             );
@@ -139,7 +139,7 @@ function CartPage() {
             )}
             <div className="flex justify-between">
               <dt className="text-muted-foreground">ارسال</dt>
-              <dd>{shipping === 0 ? "رایگان" : `${formatToman(shipping)} تومان`}</dd>
+              <dd>{hasPacks ? "باربری (پس‌کرایه)" : shipping === 0 ? "رایگان" : `${formatToman(shipping)} تومان`}</dd>
             </div>
             <div className="flex justify-between border-t border-border pt-3 text-base">
               <dt>مبلغ نهایی</dt>
